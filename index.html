@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>New Orleans — Apr 25–28</title>
+<style>
+  :root {
+    --purple: #4a2e5c;
+    --purple-soft: #6b4a80;
+    --green: #3e6b4a;
+    --green-soft: #5a8a68;
+    --gold: #c9a961;
+    --gold-soft: #e3c98a;
+    --cream: #faf7f0;
+    --ink: #2a1f35;
+    --paper: #fdfcf7;
+    --line: rgba(74, 46, 92, 0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.6;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(201, 169, 97, 0.04) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(74, 46, 92, 0.04) 0%, transparent 40%);
+  }
+
+  header {
+    text-align: center;
+    padding: 3rem 1.5rem 2rem;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+    position: relative;
+  }
+
+  header::before, header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  header::before { left: 50%; transform: translateX(-120px); }
+  header::after { left: 50%; transform: translateX(60px); }
+
+  .fleur {
+    display: inline-block;
+    width: 48px;
+    height: 48px;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-family: 'Didot', 'Bodoni MT', Georgia, serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--purple);
+    margin-bottom: 0.3rem;
+  }
+
+  .subtitle {
+    font-style: italic;
+    color: var(--green);
+    letter-spacing: 0.15em;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+  }
+
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  .day {
+    margin-bottom: 2.5rem;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(74, 46, 92, 0.05);
+  }
+
+  .day-header {
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(135deg, var(--purple), var(--purple-soft));
+    color: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 3px solid var(--gold);
+  }
+
+  .day-header .fleur-sm {
+    width: 20px;
+    height: 20px;
+    color: var(--gold-soft);
+    flex-shrink: 0;
+  }
+
+  .day-title {
+    font-family: 'Didot', 'Bodoni MT', Georgia, serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.05em;
+  }
+
+  .day-date {
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    font-style: italic;
+  }
+
+  .blocks {
+    padding: 0.5rem 0;
+  }
+
+  .block {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 1.25rem;
+    padding: 1.1rem 1.5rem;
+    border-bottom: 1px dashed var(--line);
+    align-items: start;
+  }
+
+  .block:last-child { border-bottom: none; }
+
+  .block-time {
+    font-family: 'Didot', 'Bodoni MT', Georgia, serif;
+    color: var(--green);
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    padding-top: 0.1rem;
+  }
+
+  .block-content h3 {
+    font-family: Georgia, serif;
+    color: var(--purple);
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+    letter-spacing: 0.02em;
+  }
+
+  .block-content p {
+    color: var(--ink);
+    font-size: 0.95rem;
+    opacity: 0.85;
+  }
+
+  .block-content .placeholder {
+    color: var(--purple-soft);
+    font-style: italic;
+    opacity: 0.55;
+    font-size: 0.9rem;
+  }
+
+  .travel {
+    background: linear-gradient(90deg, rgba(62, 107, 74, 0.06), transparent);
+  }
+
+  .travel .block-content h3 {
+    color: var(--green);
+  }
+
+  .travel .block-content h3::before {
+    content: '✈ ';
+    color: var(--gold);
+    font-size: 0.9rem;
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem 1.5rem 3rem;
+    color: var(--purple-soft);
+    font-size: 0.85rem;
+    font-style: italic;
+    letter-spacing: 0.05em;
+  }
+
+  footer .fleur {
+    width: 24px;
+    height: 24px;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  @media (max-width: 540px) {
+    .block {
+      grid-template-columns: 1fr;
+      gap: 0.3rem;
+      padding: 1rem 1.25rem;
+    }
+    .block-time { font-size: 0.85rem; }
+    .day-header { padding: 1rem 1.25rem; }
+    .day-title { font-size: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Reusable fleur-de-lis SVG (inline for simplicity) -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="fleur-de-lis" viewBox="0 0 100 100">
+      <path fill="currentColor" d="M50 5 C 45 15, 40 25, 40 35 C 40 42, 44 48, 50 50 C 56 48, 60 42, 60 35 C 60 25, 55 15, 50 5 Z
+        M30 30 C 20 35, 15 45, 18 55 C 22 62, 30 62, 35 58 C 33 50, 32 42, 32 35 C 32 33, 31 31, 30 30 Z
+        M70 30 C 80 35, 85 45, 82 55 C 78 62, 70 62, 65 58 C 67 50, 68 42, 68 35 C 68 33, 69 31, 70 30 Z
+        M30 55 L 70 55 L 72 62 L 28 62 Z
+        M50 55 L 50 95
+        M35 75 C 30 78, 28 85, 32 92 C 40 90, 45 85, 48 78
+        M65 75 C 70 78, 72 85, 68 92 C 60 90, 55 85, 52 78
+        M42 95 L 58 95 L 60 98 L 40 98 Z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header>
+  <svg class="fleur"><use href="#fleur-de-lis"/></svg>
+  <h1>New Orleans</h1>
+  <div class="subtitle">April 25 &mdash; 28, 2026</div>
+</header>
+
+<main>
+
+  <!-- SATURDAY -->
+  <section class="day">
+    <div class="day-header">
+      <svg class="fleur-sm"><use href="#fleur-de-lis"/></svg>
+      <div class="day-title">Saturday</div>
+      <div class="day-date">Apr 25 &middot; Arrival</div>
+    </div>
+    <div class="blocks">
+      <div class="block travel">
+        <div class="block-time">12:02 PM</div>
+        <div class="block-content">
+          <h3>Flight: Bloomington &rarr; Atlanta</h3>
+          <p>Delta DL4952 &middot; Arrives ATL 2:53 PM &middot; Conf. HOSIK5</p>
+        </div>
+      </div>
+      <div class="block travel">
+        <div class="block-time">3:42 PM</div>
+        <div class="block-content">
+          <h3>Flight: Atlanta &rarr; New Orleans</h3>
+          <p>Arrives MSY 4:15 PM</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUNDAY -->
+  <section class="day">
+    <div class="day-header">
+      <svg class="fleur-sm"><use href="#fleur-de-lis"/></svg>
+      <div class="day-title">Sunday</div>
+      <div class="day-date">Apr 26</div>
+    </div>
+    <div class="blocks">
+      <div class="block">
+        <div class="block-time">2:00 PM</div>
+        <div class="block-content">
+          <h3>New Orleans Cocktail &amp; Food History Tour</h3>
+          <p>2 adults &middot; ~4 hours &middot; Booking #1387457733</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MONDAY -->
+  <section class="day">
+    <div class="day-header">
+      <svg class="fleur-sm"><use href="#fleur-de-lis"/></svg>
+      <div class="day-title">Monday</div>
+      <div class="day-date">Apr 27</div>
+    </div>
+    <div class="blocks">
+      <div class="block">
+        <div class="block-time">5:00 – 7:00 PM</div>
+        <div class="block-content">
+          <h3>Happy Hour &mdash; Cane &amp; Table</h3>
+          <p>1113 Decatur St, New Orleans, LA 70116 &middot; (504) 581-1112</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TUESDAY -->
+  <section class="day">
+    <div class="day-header">
+      <svg class="fleur-sm"><use href="#fleur-de-lis"/></svg>
+      <div class="day-title">Tuesday</div>
+      <div class="day-date">Apr 28 &middot; Departure</div>
+    </div>
+    <div class="blocks">
+      <div class="block travel">
+        <div class="block-time">6:48 AM</div>
+        <div class="block-content">
+          <h3>Flight: New Orleans &rarr; Atlanta</h3>
+          <p>Arrives ATL 9:20 AM</p>
+        </div>
+      </div>
+      <div class="block travel">
+        <div class="block-time">10:26 AM</div>
+        <div class="block-content">
+          <h3>Flight: Atlanta &rarr; Bloomington</h3>
+          <p>Arrives BMI 11:20 AM</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div>
+    <svg class="fleur"><use href="#fleur-de-lis"/></svg>
+  </div>
+  Laissez les bons temps rouler
+</footer>
+
+</body>
+</html>
