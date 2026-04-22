@@ -444,6 +444,7 @@
 
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${NOLA_LAT}&longitude=${NOLA_LON}` +
       `&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code` +
+      `&hourly=relative_humidity_2m` +
       `&temperature_unit=fahrenheit&timezone=America/Chicago&start_date=${start}&end_date=${end}`;
 
     // WMO weather code → human label. Grouped broadly rather than listing every
@@ -466,6 +467,24 @@
       .then(data => {
         const d = data.daily;
         if (!d || !d.time) throw new Error('no daily data');
+
+        // Daily mean humidity is not a native Open-Meteo field, so we
+        // average hourly relative_humidity_2m values grouped by date.
+        const humidityByDate = {};
+        const h = data.hourly;
+        if (h && h.time && h.relative_humidity_2m) {
+          const buckets = {};
+          h.time.forEach((t, i) => {
+            const date = t.slice(0, 10);
+            (buckets[date] = buckets[date] || []).push(h.relative_humidity_2m[i]);
+          });
+          Object.keys(buckets).forEach(date => {
+            const vals = buckets[date].filter(v => v != null);
+            if (!vals.length) return;
+            humidityByDate[date] = Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+          });
+        }
+
         const byDate = {};
         d.time.forEach((t, i) => {
           byDate[t] = {
@@ -473,6 +492,7 @@
             lo: Math.round(d.temperature_2m_min[i]),
             pop: d.precipitation_probability_max[i],
             code: d.weather_code[i],
+            humidity: humidityByDate[t],
           };
         });
         days.forEach(day => {
@@ -486,6 +506,9 @@
             `<span>${describe(f.code)}</span>` +
             (f.pop != null
               ? `<span class="wx-dot">&middot;</span><span class="wx-muted">${f.pop}% rain</span>`
+              : '') +
+            (f.humidity != null
+              ? `<span class="wx-dot">&middot;</span><span class="wx-muted">${f.humidity}% humidity</span>`
               : '');
         });
       })
