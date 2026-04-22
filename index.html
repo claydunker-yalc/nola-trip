@@ -123,6 +123,36 @@
     font-style: italic;
   }
 
+  .weather {
+    padding: 0.65rem 1.5rem;
+    background: linear-gradient(90deg, rgba(201, 169, 97, 0.08), rgba(74, 46, 92, 0.04));
+    border-bottom: 1px solid var(--line);
+    font-size: 0.88rem;
+    color: var(--purple);
+    letter-spacing: 0.03em;
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    flex-wrap: wrap;
+    font-style: italic;
+    min-height: 2.2rem;
+  }
+
+  .weather .wx-dot {
+    color: var(--gold);
+    opacity: 0.7;
+  }
+
+  .weather .wx-temp {
+    font-weight: 600;
+    font-style: normal;
+    color: var(--green);
+  }
+
+  .weather .wx-muted {
+    opacity: 0.6;
+  }
+
   .blocks {
     padding: 0.5rem 0;
   }
@@ -246,12 +276,13 @@
 <main>
 
   <!-- SATURDAY -->
-  <section class="day">
+  <section class="day" data-date="2026-04-25">
     <div class="day-header">
       <svg class="fleur-sm"><use href="#fleur-de-lis"/></svg>
       <div class="day-title">Saturday</div>
       <div class="day-date">Apr 25</div>
     </div>
+    <div class="weather"><span class="wx-muted">Loading forecast&hellip;</span></div>
     <div class="blocks">
       <div class="block travel">
         <div class="block-time">12:02 PM</div>
@@ -285,12 +316,13 @@
   </section>
 
   <!-- SUNDAY -->
-  <section class="day">
+  <section class="day" data-date="2026-04-26">
     <div class="day-header">
       <svg class="fleur-sm"><use href="#fleur-de-lis"/></svg>
       <div class="day-title">Sunday</div>
       <div class="day-date">Apr 26</div>
     </div>
+    <div class="weather"><span class="wx-muted">Loading forecast&hellip;</span></div>
     <div class="blocks">
       <div class="block">
         <div class="block-time">2:00 PM</div>
@@ -303,12 +335,13 @@
   </section>
 
   <!-- MONDAY -->
-  <section class="day">
+  <section class="day" data-date="2026-04-27">
     <div class="day-header">
       <svg class="fleur-sm"><use href="#fleur-de-lis"/></svg>
       <div class="day-title">Monday</div>
       <div class="day-date">Apr 27</div>
     </div>
+    <div class="weather"><span class="wx-muted">Loading forecast&hellip;</span></div>
     <div class="blocks">
       <div class="block">
         <div class="block-time">5:00 – 7:00 PM</div>
@@ -328,12 +361,13 @@
   </section>
 
   <!-- TUESDAY -->
-  <section class="day">
+  <section class="day" data-date="2026-04-28">
     <div class="day-header">
       <svg class="fleur-sm"><use href="#fleur-de-lis"/></svg>
       <div class="day-title">Tuesday</div>
       <div class="day-date">Apr 28</div>
     </div>
+    <div class="weather"><span class="wx-muted">Loading forecast&hellip;</span></div>
     <div class="blocks">
       <div class="block travel">
         <div class="block-time">6:48 AM</div>
@@ -389,6 +423,79 @@
   </div>
   Laissez les bons temps rouler
 </footer>
+
+<script>
+  // New Orleans forecast via Open-Meteo (no API key required).
+  // Why: dates are in the near future and we want the itinerary to reflect
+  // live conditions without requiring the user to refresh a separate app.
+  // Graceful failure: if the fetch errors, we simply hide the weather strips
+  // rather than leaving "Loading forecast..." in place.
+  (function () {
+    const NOLA_LAT = 29.9511;
+    const NOLA_LON = -90.0715;
+    const days = Array.from(document.querySelectorAll('.day[data-date]'));
+    if (!days.length) return;
+
+    const dates = days.map(d => d.dataset.date).sort();
+    const start = dates[0];
+    const end = dates[dates.length - 1];
+
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${NOLA_LAT}&longitude=${NOLA_LON}` +
+      `&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code` +
+      `&temperature_unit=fahrenheit&timezone=America/Chicago&start_date=${start}&end_date=${end}`;
+
+    // WMO weather code → human label. Grouped broadly rather than listing every
+    // subcode so the UI stays readable.
+    function describe(code) {
+      if (code === 0) return 'Clear';
+      if (code <= 2) return 'Mostly sunny';
+      if (code === 3) return 'Cloudy';
+      if (code >= 45 && code <= 48) return 'Fog';
+      if (code >= 51 && code <= 57) return 'Drizzle';
+      if (code >= 61 && code <= 67) return 'Rain';
+      if (code >= 71 && code <= 77) return 'Snow';
+      if (code >= 80 && code <= 82) return 'Showers';
+      if (code >= 95) return 'Thunderstorms';
+      return 'Mild';
+    }
+
+    fetch(url)
+      .then(r => { if (!r.ok) throw new Error('forecast fetch failed'); return r.json(); })
+      .then(data => {
+        const d = data.daily;
+        if (!d || !d.time) throw new Error('no daily data');
+        const byDate = {};
+        d.time.forEach((t, i) => {
+          byDate[t] = {
+            hi: Math.round(d.temperature_2m_max[i]),
+            lo: Math.round(d.temperature_2m_min[i]),
+            pop: d.precipitation_probability_max[i],
+            code: d.weather_code[i],
+          };
+        });
+        days.forEach(day => {
+          const strip = day.querySelector('.weather');
+          const f = byDate[day.dataset.date];
+          if (!strip) return;
+          if (!f) { strip.style.display = 'none'; return; }
+          strip.innerHTML =
+            `<span class="wx-temp">${f.hi}&deg; / ${f.lo}&deg;</span>` +
+            `<span class="wx-dot">&middot;</span>` +
+            `<span>${describe(f.code)}</span>` +
+            (f.pop != null
+              ? `<span class="wx-dot">&middot;</span><span class="wx-muted">${f.pop}% rain</span>`
+              : '');
+        });
+      })
+      .catch(() => {
+        // Hide strips entirely on failure — better than a stuck spinner.
+        days.forEach(day => {
+          const strip = day.querySelector('.weather');
+          if (strip) strip.style.display = 'none';
+        });
+      });
+  })();
+</script>
 
 </body>
 </html>
