@@ -173,6 +173,14 @@
     background: linear-gradient(90deg, rgba(62, 107, 74, 0.06), transparent);
   }
 
+  .block.notime {
+    grid-template-columns: 1fr;
+  }
+
+  .day.bookmarks .day-header {
+    background: linear-gradient(135deg, var(--green), var(--green-soft));
+  }
+
   .travel .block-content h3 {
     color: var(--green);
   }
@@ -278,13 +286,6 @@
     </div>
     <div class="blocks">
       <div class="block">
-        <div class="block-time">~9:00 AM</div>
-        <div class="block-content">
-          <h3>Café du Monde</h3>
-          <p>800 Decatur St &middot; (504) 525-4544 &middot; Opens 7:15 AM</p>
-        </div>
-      </div>
-      <div class="block">
         <div class="block-time">2:00 PM</div>
         <div class="block-content">
           <h3>New Orleans Cocktail &amp; Food History Tour</h3>
@@ -332,6 +333,23 @@
         <div class="block-content">
           <h3>Flight: Atlanta &rarr; Bloomington</h3>
           <p>Arrives BMI 11:20 AM</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLACES TO CHECK OUT -->
+  <section class="day bookmarks">
+    <div class="day-header">
+      <svg class="fleur-sm"><use href="#fleur-de-lis"/></svg>
+      <div class="day-title">Places to check out</div>
+      <div class="day-date">If time allows</div>
+    </div>
+    <div class="blocks">
+      <div class="block notime">
+        <div class="block-content">
+          <h3>Café du Monde</h3>
+          <p>800 Decatur St &middot; (504) 525-4544 &middot; Opens 7:15 AM</p>
         </div>
       </div>
     </div>
