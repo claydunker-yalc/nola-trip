@@ -101,18 +101,35 @@
     position: relative;
   }
 
-  /* Paper-edge flourish at the bottom of each day card */
+  /* Paper-edge flourish at the bottom of each day card.
+     Each card cycles through one of 6 variants so widths, positions,
+     and counts vary — no two adjacent cards look the same. */
   .day::before, .day::after {
     content: '';
     position: absolute;
     bottom: -1px;
-    width: 60px;
     height: 2px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
     pointer-events: none;
   }
-  .day::before { left: 50%; transform: translateX(-120px); }
-  .day::after { left: 50%; transform: translateX(60px); }
+  /* Variant 1 — classic balanced pair */
+  .day:nth-of-type(6n+1)::before { width: 60px; left: 50%; transform: translateX(-120px); }
+  .day:nth-of-type(6n+1)::after  { width: 60px; left: 50%; transform: translateX(60px); }
+  /* Variant 2 — small left, long right */
+  .day:nth-of-type(6n+2)::before { width: 38px; left: 50%; transform: translateX(-110px); }
+  .day:nth-of-type(6n+2)::after  { width: 84px; left: 50%; transform: translateX(20px); }
+  /* Variant 3 — single long flourish, offset left */
+  .day:nth-of-type(6n+3)::before { width: 110px; left: 50%; transform: translateX(-170px); }
+  .day:nth-of-type(6n+3)::after  { display: none; }
+  /* Variant 4 — wide spread, narrow lines */
+  .day:nth-of-type(6n+4)::before { width: 46px; left: 50%; transform: translateX(-190px); }
+  .day:nth-of-type(6n+4)::after  { width: 46px; left: 50%; transform: translateX(140px); }
+  /* Variant 5 — both lines drift to the left */
+  .day:nth-of-type(6n+5)::before { width: 28px; left: 50%; transform: translateX(-150px); }
+  .day:nth-of-type(6n+5)::after  { width: 72px; left: 50%; transform: translateX(-50px); }
+  /* Variant 6 — single line, right side only */
+  .day:nth-of-type(6n)::before   { display: none; }
+  .day:nth-of-type(6n)::after    { width: 92px; left: 50%; transform: translateX(10px); }
 
   .day-header {
     padding: 1.25rem 1.5rem;
@@ -275,18 +292,18 @@
     position: relative;
   }
 
-  /* Mirror the paper-edge flourish at the top of the footer */
+  /* Mirror the paper-edge flourish at the top of the footer.
+     Distinct variant — narrower, asymmetric — so it doesn't echo the header. */
   footer::before, footer::after {
     content: '';
     position: absolute;
     top: -1px;
-    width: 60px;
     height: 2px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
     pointer-events: none;
   }
-  footer::before { left: 50%; transform: translateX(-120px); }
-  footer::after { left: 50%; transform: translateX(60px); }
+  footer::before { width: 32px; left: 50%; transform: translateX(-130px); }
+  footer::after  { width: 96px; left: 50%; transform: translateX(34px); }
 
   footer .fleur {
     width: 24px;
