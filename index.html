@@ -17,26 +17,34 @@
     --ink: #2a1f35;
     --paper: #fdfcf7;
     --line: rgba(74, 46, 92, 0.15);
+
+    /* Subtle resume-paper grain — tiled SVG noise, ~6% opacity */
+    --paper-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch' seed='4'/><feColorMatrix values='0 0 0 0 0.25  0 0 0 0 0.18  0 0 0 0 0.12  0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
     font-family: Georgia, 'Times New Roman', serif;
-    background: var(--cream);
+    background-color: var(--cream);
     color: var(--ink);
     line-height: 1.6;
     min-height: 100vh;
     background-image:
+      var(--paper-grain),
       radial-gradient(circle at 10% 20%, rgba(201, 169, 97, 0.04) 0%, transparent 40%),
       radial-gradient(circle at 90% 80%, rgba(74, 46, 92, 0.04) 0%, transparent 40%);
+    background-size: 240px 240px, auto, auto;
+    background-attachment: fixed, scroll, scroll;
   }
 
   header {
     text-align: center;
     padding: 3rem 1.5rem 2rem;
     border-bottom: 1px solid var(--line);
-    background: var(--paper);
+    background-color: var(--paper);
+    background-image: var(--paper-grain);
+    background-size: 240px 240px;
     position: relative;
   }
 
@@ -84,7 +92,9 @@
 
   .day {
     margin-bottom: 2.5rem;
-    background: var(--paper);
+    background-color: var(--paper);
+    background-image: var(--paper-grain);
+    background-size: 240px 240px;
     border: 1px solid var(--line);
     border-radius: 4px;
     box-shadow: 0 2px 12px rgba(74, 46, 92, 0.05);
