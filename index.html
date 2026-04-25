@@ -259,6 +259,30 @@
     font-size: 0.9rem;
   }
 
+  /* Subtle "open in maps" link — italic small caps, muted green.
+     href uses Google Maps Directions API with travelmode=walking,
+     which opens the Maps app on iOS/Android and routes from the user's current location. */
+  .map-link {
+    display: inline-block;
+    margin-top: 0.35rem;
+    font-size: 0.72rem;
+    font-style: italic;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--green);
+    text-decoration: none;
+    opacity: 0.65;
+    transition: opacity 0.15s ease, color 0.15s ease;
+  }
+  .map-link::before {
+    content: '↗ ';
+    font-style: normal;
+  }
+  .map-link:hover {
+    opacity: 1;
+    color: var(--purple);
+  }
+
   .travel {
     background: linear-gradient(90deg, rgba(62, 107, 74, 0.06), transparent);
   }
@@ -382,6 +406,7 @@
         <div class="block-content">
           <h3>Hotel check-in</h3>
           <p>315 Julia St, New Orleans, LA 70130 &middot; (504) 525-1993</p>
+          <a class="map-link" href="https://www.google.com/maps/dir/?api=1&destination=315+Julia+St,+New+Orleans,+LA+70130&travelmode=walking" target="_blank" rel="noopener">map</a>
         </div>
       </div>
       <div class="block">
@@ -389,6 +414,7 @@
         <div class="block-content">
           <h3>Dinner &mdash; <a href="https://zestycreole.com/" target="_blank" rel="noopener">Zesty Creole</a></h3>
           <p>827 Canal St, New Orleans, LA 70112 &middot; (504) 766-6368 &middot; Open til 10 PM</p>
+          <a class="map-link" href="https://www.google.com/maps/dir/?api=1&destination=827+Canal+St,+New+Orleans,+LA+70112&travelmode=walking" target="_blank" rel="noopener">map</a>
         </div>
       </div>
     </div>
@@ -409,6 +435,7 @@
           <h3>New Orleans Cocktail &amp; Food History Tour</h3>
           <p>Meets at <a href="https://www.redfishgrill.com/" target="_blank" rel="noopener">Red Fish Grill</a> &middot; 115 Bourbon St, New Orleans, LA 70130</p>
           <p>2 adults &middot; ~4 hours &middot; Booking #1387457733</p>
+          <a class="map-link" href="https://www.google.com/maps/dir/?api=1&destination=115+Bourbon+St,+New+Orleans,+LA+70130&travelmode=walking" target="_blank" rel="noopener">map</a>
         </div>
       </div>
     </div>
@@ -428,6 +455,7 @@
         <div class="block-content">
           <h3>Happy Hour &mdash; <a href="https://www.caneandtablenola.com/" target="_blank" rel="noopener">Cane &amp; Table</a></h3>
           <p>1113 Decatur St, New Orleans, LA 70116 &middot; (504) 581-1112</p>
+          <a class="map-link" href="https://www.google.com/maps/dir/?api=1&destination=1113+Decatur+St,+New+Orleans,+LA+70116&travelmode=walking" target="_blank" rel="noopener">map</a>
         </div>
       </div>
       <div class="block notime">
@@ -435,6 +463,7 @@
           <h3>Note: <a href="https://www.preservationhall.com/" target="_blank" rel="noopener">Preservation Hall</a> &mdash; Brass Band (Monday nights)</h3>
           <p>Showtimes: 5:00 PM &middot; 6:15 PM &middot; 7:30 PM &middot; 8:45 PM</p>
           <p>726 St Peter St, New Orleans, LA 70116 &middot; (504) 522-2841</p>
+          <a class="map-link" href="https://www.google.com/maps/dir/?api=1&destination=726+St+Peter+St,+New+Orleans,+LA+70116&travelmode=walking" target="_blank" rel="noopener">map</a>
         </div>
       </div>
     </div>
@@ -478,18 +507,21 @@
         <div class="block-content">
           <h3><a href="https://shop.cafedumonde.com/" target="_blank" rel="noopener">Café du Monde</a></h3>
           <p>800 Decatur St &middot; (504) 525-4544 &middot; Opens 7:15 AM</p>
+          <a class="map-link" href="https://www.google.com/maps/dir/?api=1&destination=800+Decatur+St,+New+Orleans,+LA+70116&travelmode=walking" target="_blank" rel="noopener">map</a>
         </div>
       </div>
       <div class="block notime">
         <div class="block-content">
           <h3><a href="https://www.cafebeignet.com/" target="_blank" rel="noopener">Café Beignet &mdash; Royal Street</a></h3>
           <p>334 Royal St &middot; (504) 524-5530</p>
+          <a class="map-link" href="https://www.google.com/maps/dir/?api=1&destination=334+Royal+St,+New+Orleans,+LA+70130&travelmode=walking" target="_blank" rel="noopener">map</a>
         </div>
       </div>
       <div class="block notime">
         <div class="block-content">
           <h3><a href="https://latitude29nola.com/" target="_blank" rel="noopener">Latitude 29</a></h3>
           <p>321 N. Peters St &middot; (504) 609-3811</p>
+          <a class="map-link" href="https://www.google.com/maps/dir/?api=1&destination=321+N+Peters+St,+New+Orleans,+LA+70130&travelmode=walking" target="_blank" rel="noopener">map</a>
         </div>
       </div>
     </div>
@@ -525,42 +557,49 @@
         <div class="block-content">
           <h3><a href="https://muriels.com/" target="_blank" rel="noopener">Muriel's Jackson Square</a> &mdash; dinner</h3>
           <p>Walk around upstairs and step out on the balcony.</p>
+          <a class="map-link" href="https://www.google.com/maps/dir/?api=1&destination=801+Chartres+St,+New+Orleans,+LA+70116&travelmode=walking" target="_blank" rel="noopener">map</a>
         </div>
       </div>
       <div class="block notime">
         <div class="block-content">
           <h3>Frenchmen Street &mdash; bar hopping</h3>
           <p>Nikki says better vibe than Bourbon.</p>
+          <a class="map-link" href="https://www.google.com/maps/dir/?api=1&destination=Frenchmen+Street,+New+Orleans,+LA&travelmode=walking" target="_blank" rel="noopener">map</a>
         </div>
       </div>
       <div class="block notime">
         <div class="block-content">
           <h3><a href="https://www.brennansneworleans.com/" target="_blank" rel="noopener">Brennan's</a> &mdash; bananas foster</h3>
           <p>It was invented here.</p>
+          <a class="map-link" href="https://www.google.com/maps/dir/?api=1&destination=417+Royal+St,+New+Orleans,+LA+70130&travelmode=walking" target="_blank" rel="noopener">map</a>
         </div>
       </div>
       <div class="block notime">
         <div class="block-content">
           <h3>Magazine Street</h3>
           <p>Shopping.</p>
+          <a class="map-link" href="https://www.google.com/maps/dir/?api=1&destination=Magazine+Street,+New+Orleans,+LA&travelmode=walking" target="_blank" rel="noopener">map</a>
         </div>
       </div>
       <div class="block notime">
         <div class="block-content">
           <h3><a href="https://rubybrunch.com/" target="_blank" rel="noopener">Ruby Slipper</a> &mdash; breakfast</h3>
           <p>Multiple locations across the city.</p>
+          <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Ruby+Slipper+Cafe,+New+Orleans" target="_blank" rel="noopener">map</a>
         </div>
       </div>
       <div class="block notime">
         <div class="block-content">
           <h3><a href="https://mollysriseandshine.com/" target="_blank" rel="noopener">Molly's Rise and Shine</a> &mdash; breakfast</h3>
           <p>2368 Magazine St &middot; closed Tuesdays &middot; no reservations.</p>
+          <a class="map-link" href="https://www.google.com/maps/dir/?api=1&destination=2368+Magazine+St,+New+Orleans,+LA+70130&travelmode=walking" target="_blank" rel="noopener">map</a>
         </div>
       </div>
       <div class="block notime">
         <div class="block-content">
           <h3><a href="https://www.turkeyandthewolf.com/" target="_blank" rel="noopener">Turkey and the Wolf</a> &mdash; lunch</h3>
           <p>Nikki: "Get the fried bologna sandwich — it's AMAZING!"</p>
+          <a class="map-link" href="https://www.google.com/maps/dir/?api=1&destination=739+Jackson+Ave,+New+Orleans,+LA+70130&travelmode=walking" target="_blank" rel="noopener">map</a>
         </div>
       </div>
       <div class="block notime">
