@@ -300,6 +300,31 @@
   }
   .day.nikki .day-header .day-date { color: var(--cream); }
 
+  /* Collapsible day cards (used for Nikki's section) */
+  .day.collapsible .day-header {
+    cursor: pointer;
+    user-select: none;
+  }
+  .day.collapsible .day-header .chevron {
+    width: 14px;
+    height: 14px;
+    color: var(--cream);
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+  }
+  .day.collapsible.collapsed .day-header .chevron {
+    transform: rotate(-90deg);
+  }
+  .day.collapsible.collapsed .blocks {
+    display: none;
+  }
+  .day.collapsible .day-header:hover .chevron {
+    transform: scale(1.1);
+  }
+  .day.collapsible.collapsed .day-header:hover .chevron {
+    transform: rotate(-90deg) scale(1.1);
+  }
+
   .travel .block-content h3 {
     color: var(--green);
   }
@@ -485,6 +510,14 @@
         </div>
       </div>
       <div class="block">
+        <div class="block-time">~6:30 PM</div>
+        <div class="block-content">
+          <h3>Beignets &mdash; <a href="https://shop.cafedumonde.com/" target="_blank" rel="noopener">Café du Monde</a></h3>
+          <p>800 Decatur St, New Orleans, LA 70116 &middot; (504) 525-4544</p>
+          <a class="map-link" href="https://www.google.com/maps/dir/?api=1&destination=800+Decatur+St,+New+Orleans,+LA+70116&travelmode=walking" target="_blank" rel="noopener">map</a>
+        </div>
+      </div>
+      <div class="block">
         <div class="block-time">8:00 PM</div>
         <div class="block-content">
           <h3><a href="https://latitude29nola.com/" target="_blank" rel="noopener">Latitude 29</a></h3>
@@ -591,32 +624,14 @@
     </div>
   </section>
 
-  <!-- PLACES TO CHECK OUT -->
-  <section class="day bookmarks">
-    <div class="day-header">
-      <svg class="fleur-sm"><use href="#fleur-de-lis"/></svg>
-      <div class="day-title">Places to check out</div>
-      <div class="day-date"></div>
-    </div>
-    <div class="blocks">
-      <div class="block notime">
-        <div class="block-content">
-          <h3><a href="https://shop.cafedumonde.com/" target="_blank" rel="noopener">Café du Monde</a></h3>
-          <p>800 Decatur St &middot; (504) 525-4544 &middot; Opens 7:15 AM</p>
-          <a class="map-link" href="https://www.google.com/maps/dir/?api=1&destination=800+Decatur+St,+New+Orleans,+LA+70116&travelmode=walking" target="_blank" rel="noopener">map</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- RECOMMENDED BY NIKKI -->
-  <section class="day nikki">
-    <div class="day-header">
+  <section class="day nikki collapsible collapsed">
+    <div class="day-header" role="button" tabindex="0" aria-expanded="false" aria-controls="nikki-blocks">
       <svg class="fleur-sm"><use href="#fleur-de-lis"/></svg>
       <div class="day-title">Recommended by Nikki</div>
-      <div class="day-date"></div>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
-    <div class="blocks">
+    <div class="blocks" id="nikki-blocks">
       <div class="block notime">
         <div class="block-content">
           <h3><a href="https://www.nojazzfest.com/" target="_blank" rel="noopener">Jazz Fest</a></h3>
@@ -795,6 +810,25 @@
           if (strip) strip.style.display = 'none';
         });
       });
+  })();
+
+  // Collapsible day cards — toggle the .collapsed class on click/Enter/Space
+  (function () {
+    document.querySelectorAll('.day.collapsible').forEach(section => {
+      const header = section.querySelector('.day-header');
+      if (!header) return;
+      const toggle = () => {
+        const isCollapsed = section.classList.toggle('collapsed');
+        header.setAttribute('aria-expanded', String(!isCollapsed));
+      };
+      header.addEventListener('click', toggle);
+      header.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggle();
+        }
+      });
+    });
   })();
 </script>
 
