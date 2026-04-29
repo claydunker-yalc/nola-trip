@@ -1,0 +1,7 @@
+# Original full-resolution photos. The carousel reads from /photos
+# (web-optimized output of scripts/resize-photos.sh), so the raw
+# originals stay on disk locally but never get committed.
+photos-raw/
+
+# macOS metadata
+.DS_Store

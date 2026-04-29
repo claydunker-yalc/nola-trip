@@ -300,6 +300,119 @@
   }
   .day.nikki .day-header .day-date { color: var(--cream); }
 
+  /* -----------------------------------------------------------------
+     Photo carousel
+     ----------------------------------------------------------------
+     Sits between the page header and the day cards. Loads its photo
+     list from /photos/manifest.json at runtime so adding photos is
+     a matter of dropping files into /photos-raw and re-running
+     scripts/resize-photos.sh — no HTML edits needed.
+
+     Why scroll-snap rather than a JS-driven slider:
+       - Native swipe gestures on mobile come for free.
+       - Smooth on desktop with overflow-x scroll.
+       - Browser handles momentum, accessibility scrolling, etc.
+       - JS only manages prev/next buttons and the counter.
+     Photos use loading="lazy" so only what's near the viewport loads.
+  ----------------------------------------------------------------- */
+  .carousel {
+    max-width: 760px;
+    margin: 2rem auto 0;
+    padding: 0 1.5rem;
+  }
+  .carousel-frame {
+    position: relative;
+    background: var(--paper);
+    background-image: var(--paper-grain-fine), var(--paper-grain-fiber);
+    background-size: 220px 220px, 360px 360px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    box-shadow: 0 4px 16px rgba(74, 46, 92, 0.08);
+    overflow: hidden;
+  }
+  .carousel-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    aspect-ratio: 4 / 3;
+    /* Hide scrollbar — the dots/counter convey position */
+    scrollbar-width: none;
+  }
+  .carousel-track::-webkit-scrollbar { display: none; }
+  .carousel-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    scroll-snap-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1a1118;
+  }
+  .carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .carousel-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 4 / 3;
+    color: var(--purple-soft);
+    font-style: italic;
+    font-size: 0.95rem;
+  }
+
+  /* Prev / next buttons */
+  .carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(74, 46, 92, 0.7);
+    color: var(--cream);
+    border: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    line-height: 1;
+    transition: background 0.2s ease;
+    z-index: 2;
+  }
+  .carousel-btn:hover { background: rgba(74, 46, 92, 0.9); }
+  .carousel-btn:disabled { opacity: 0.3; cursor: default; }
+  .carousel-btn.prev { left: 10px; }
+  .carousel-btn.next { right: 10px; }
+
+  /* Counter chip */
+  .carousel-counter {
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    background: rgba(74, 46, 92, 0.7);
+    color: var(--cream);
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-family: 'Didot', 'Bodoni MT', Georgia, serif;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  @media (max-width: 540px) {
+    .carousel { padding: 0 0.75rem; margin-top: 1.25rem; }
+    .carousel-btn { width: 32px; height: 32px; font-size: 1rem; }
+  }
+
   /* Collapsible day cards (used for Nikki's section) */
   .day.collapsible .day-header {
     cursor: pointer;
@@ -400,6 +513,17 @@
   <h1>New Orleans</h1>
   <div class="subtitle">April 25 &mdash; 28, 2026</div>
 </header>
+
+<!-- Photo carousel — populated from photos/manifest.json by JS below.
+     If the manifest is empty or fails to load, the section quietly hides. -->
+<section class="carousel" id="carousel" aria-label="Trip photos" hidden>
+  <div class="carousel-frame">
+    <button class="carousel-btn prev" type="button" aria-label="Previous photo">&#8592;</button>
+    <div class="carousel-track" id="carousel-track"></div>
+    <button class="carousel-btn next" type="button" aria-label="Next photo">&#8594;</button>
+    <div class="carousel-counter" id="carousel-counter">1 / 1</div>
+  </div>
+</section>
 
 <main>
 
@@ -810,6 +934,71 @@
           if (strip) strip.style.display = 'none';
         });
       });
+  })();
+
+  // Photo carousel — load list from manifest.json, build slides,
+  // wire prev/next buttons, update counter as user scrolls.
+  (function () {
+    const section = document.getElementById('carousel');
+    const track   = document.getElementById('carousel-track');
+    const counter = document.getElementById('carousel-counter');
+    if (!section || !track || !counter) return;
+
+    fetch('photos/manifest.json', { cache: 'no-cache' })
+      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(list => {
+        if (!Array.isArray(list) || list.length === 0) return;
+
+        // Build slides. loading="lazy" means only the visible slide
+        // (and its neighbors) actually fetch the JPEG initially.
+        list.forEach((name, i) => {
+          const slide = document.createElement('div');
+          slide.className = 'carousel-slide';
+          const img = document.createElement('img');
+          img.src = 'photos/' + name;
+          img.alt = 'New Orleans trip photo ' + (i + 1);
+          img.loading = i === 0 ? 'eager' : 'lazy';
+          img.decoding = 'async';
+          slide.appendChild(img);
+          track.appendChild(slide);
+        });
+
+        section.hidden = false;
+        counter.textContent = '1 / ' + list.length;
+
+        const prev = section.querySelector('.carousel-btn.prev');
+        const next = section.querySelector('.carousel-btn.next');
+
+        const slideWidth = () => track.clientWidth;
+
+        const indexFromScroll = () =>
+          Math.round(track.scrollLeft / slideWidth());
+
+        const updateChrome = () => {
+          const i = indexFromScroll();
+          counter.textContent = (i + 1) + ' / ' + list.length;
+          prev.disabled = i <= 0;
+          next.disabled = i >= list.length - 1;
+        };
+
+        prev.addEventListener('click', () => {
+          track.scrollBy({ left: -slideWidth(), behavior: 'smooth' });
+        });
+        next.addEventListener('click', () => {
+          track.scrollBy({ left:  slideWidth(), behavior: 'smooth' });
+        });
+
+        // Throttle scroll updates with rAF
+        let pending = false;
+        track.addEventListener('scroll', () => {
+          if (pending) return;
+          pending = true;
+          requestAnimationFrame(() => { pending = false; updateChrome(); });
+        });
+
+        updateChrome();
+      })
+      .catch(() => { /* no manifest → carousel stays hidden */ });
   })();
 
   // Collapsible day cards — toggle the .collapsed class on click/Enter/Space
