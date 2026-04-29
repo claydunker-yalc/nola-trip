@@ -259,6 +259,37 @@
     font-size: 0.9rem;
   }
 
+  /* Sub-stops list — used inside a block to break out a multi-stop
+     itinerary (e.g. the food tour) into its individual venues without
+     making them look like top-level entries. Indented, smaller text,
+     a thin gold rule on the left to visually anchor them as nested. */
+  .tour-stops {
+    list-style: none;
+    margin: 0.65rem 0 0;
+    padding: 0 0 0 0.85rem;
+    border-left: 2px solid var(--gold);
+  }
+  .tour-stops li {
+    margin: 0.55rem 0;
+    font-size: 0.88rem;
+    color: var(--ink);
+    opacity: 0.88;
+    line-height: 1.45;
+  }
+  .tour-stops li strong {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--purple);
+    letter-spacing: 0.01em;
+  }
+  .tour-stops li a {
+    color: var(--purple);
+    text-decoration: underline;
+    text-decoration-color: var(--gold);
+    text-underline-offset: 2px;
+  }
+
   /* Subtle "open in maps" link — italic small caps, muted green.
      href uses Google Maps Directions API with travelmode=walking,
      which opens the Maps app on iOS/Android and routes from the user's current location. */
@@ -631,6 +662,32 @@
           <p>Meets at <a href="https://www.redfishgrill.com/" target="_blank" rel="noopener">Red Fish Grill</a> &middot; 115 Bourbon St, New Orleans, LA 70130</p>
           <p>2 adults &middot; ~4 hours &middot; Booking #1387457733</p>
           <a class="map-link" href="https://www.google.com/maps/dir/?api=1&destination=115+Bourbon+St,+New+Orleans,+LA+70130&travelmode=walking" target="_blank" rel="noopener">map</a>
+          <ol class="tour-stops">
+            <li>
+              <strong><a href="https://www.redfishgrill.com/" target="_blank" rel="noopener">Red Fish Grill</a></strong><br>
+              Alligator sausage &amp; seafood gumbo with a craft Hurricane &mdash; kicked off the tour with a quick look at colonial Louisiana history.
+            </li>
+            <li>
+              <strong><a href="https://leahspralines.com/" target="_blank" rel="noopener">Leah&rsquo;s Pralines</a></strong><br>
+              Third-generation family candy store. Sampled traditional pralines and their pecan brittle.
+            </li>
+            <li>
+              <strong><a href="https://napoleonhouse.com/" target="_blank" rel="noopener">Napoleon House</a></strong><br>
+              Muffuletta, a Pimm&rsquo;s Cup, and a side of Creole jambalaya at the iconic French Quarter institution.
+            </li>
+            <li>
+              <strong><a href="https://nolasaucebar.com/" target="_blank" rel="noopener">NOLA Sauce Bar</a></strong><br>
+              Tasted hot sauces, BBQ sauces, and dry rubs while the guide walked us through Cajun influences. Free bottle of Louisiana seasoning included.
+            </li>
+            <li>
+              <strong><a href="https://www.tableaufrenchquarter.com/" target="_blank" rel="noopener">Dickie Brennan&rsquo;s Tableau</a></strong><br>
+              French 75 &mdash; lemon, brandy or gin, and bubbles &mdash; before crossing Jackson Square toward the French Market.
+            </li>
+            <li>
+              <strong><a href="https://www.caneandtablenola.com/" target="_blank" rel="noopener">Cane &amp; Table</a></strong><br>
+              Closed out at the James Beard&ndash;nominated spot with fried sweet plantains and a classic daiquiri.
+            </li>
+          </ol>
         </div>
       </div>
       <div class="block">
