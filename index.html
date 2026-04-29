@@ -993,14 +993,21 @@
           counter.textContent = (indexFromScroll() + 1) + ' / ' + list.length;
         };
 
-        // Wrap-around scroll. We use behavior 'auto' (instant) for the
-        // wrap from last → first so the user doesn't see a long reverse
-        // scroll back through every photo.
+        // Wrap-around scroll. The CSS sets scroll-behavior:smooth on
+        // the track, which overrides JS `behavior:auto` — so for the
+        // wrap from last → first we temporarily flip the inline style
+        // to 'auto', jump, then restore on the next frame. Without
+        // this the wrap visibly rewinds through every slide.
         const goTo = (i, smooth = true) => {
-          track.scrollTo({
-            left: i * slideWidth(),
-            behavior: smooth ? 'smooth' : 'auto'
-          });
+          if (!smooth) {
+            track.style.scrollBehavior = 'auto';
+            track.scrollLeft = i * slideWidth();
+            requestAnimationFrame(() => {
+              track.style.scrollBehavior = '';
+            });
+          } else {
+            track.scrollTo({ left: i * slideWidth(), behavior: 'smooth' });
+          }
         };
 
         const advance = (delta) => {
