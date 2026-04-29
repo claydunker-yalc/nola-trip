@@ -936,18 +936,34 @@
       });
   })();
 
-  // Photo carousel — load list from manifest.json, build slides,
-  // wire prev/next buttons, update counter as user scrolls.
+  // Photo carousel — load list from manifest.json, shuffle once at
+  // page load, auto-rotate every 1.5s with wrap-around. Prev/next
+  // and pointer hover pause the rotation so the user can linger.
   (function () {
     const section = document.getElementById('carousel');
     const track   = document.getElementById('carousel-track');
     const counter = document.getElementById('carousel-counter');
     if (!section || !track || !counter) return;
 
+    const SLIDE_MS = 1500;
+
+    // Fisher-Yates shuffle — fresh order on every page load so the
+    // carousel feels different each visit instead of always starting
+    // with the same photo.
+    const shuffle = arr => {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    };
+
     fetch('photos/manifest.json', { cache: 'no-cache' })
       .then(r => r.ok ? r.json() : Promise.reject(r.status))
-      .then(list => {
-        if (!Array.isArray(list) || list.length === 0) return;
+      .then(raw => {
+        if (!Array.isArray(raw) || raw.length === 0) return;
+        const list = shuffle(raw);
 
         // Build slides. loading="lazy" means only the visible slide
         // (and its neighbors) actually fetch the JPEG initially.
@@ -970,22 +986,61 @@
         const next = section.querySelector('.carousel-btn.next');
 
         const slideWidth = () => track.clientWidth;
-
         const indexFromScroll = () =>
           Math.round(track.scrollLeft / slideWidth());
 
-        const updateChrome = () => {
-          const i = indexFromScroll();
-          counter.textContent = (i + 1) + ' / ' + list.length;
-          prev.disabled = i <= 0;
-          next.disabled = i >= list.length - 1;
+        const updateCounter = () => {
+          counter.textContent = (indexFromScroll() + 1) + ' / ' + list.length;
         };
 
-        prev.addEventListener('click', () => {
-          track.scrollBy({ left: -slideWidth(), behavior: 'smooth' });
-        });
-        next.addEventListener('click', () => {
-          track.scrollBy({ left:  slideWidth(), behavior: 'smooth' });
+        // Wrap-around scroll. We use behavior 'auto' (instant) for the
+        // wrap from last → first so the user doesn't see a long reverse
+        // scroll back through every photo.
+        const goTo = (i, smooth = true) => {
+          track.scrollTo({
+            left: i * slideWidth(),
+            behavior: smooth ? 'smooth' : 'auto'
+          });
+        };
+
+        const advance = (delta) => {
+          const len = list.length;
+          const cur = indexFromScroll();
+          const nextIdx = (cur + delta + len) % len;
+          // If wrapping (e.g. last → first), jump instantly to avoid
+          // the awkward reverse scroll across every slide.
+          const wrapping = (delta > 0 && cur === len - 1) ||
+                           (delta < 0 && cur === 0);
+          goTo(nextIdx, !wrapping);
+        };
+
+        // Auto-rotate
+        let timer = null;
+        const start = () => {
+          if (timer || list.length < 2) return;
+          timer = setInterval(() => advance(1), SLIDE_MS);
+        };
+        const stop = () => {
+          if (!timer) return;
+          clearInterval(timer);
+          timer = null;
+        };
+        const restart = () => { stop(); start(); };
+
+        prev.addEventListener('click', () => { advance(-1); restart(); });
+        next.addEventListener('click', () => { advance( 1); restart(); });
+
+        // Pause while the user is hovering or touching the carousel
+        // so they can actually look at a photo without it sliding away.
+        section.addEventListener('pointerenter', stop);
+        section.addEventListener('pointerleave', start);
+        section.addEventListener('touchstart',  stop, { passive: true });
+        section.addEventListener('touchend',    start);
+
+        // Pause when tab is hidden — saves CPU and avoids a jarring
+        // jump when the user comes back.
+        document.addEventListener('visibilitychange', () => {
+          document.hidden ? stop() : start();
         });
 
         // Throttle scroll updates with rAF
@@ -993,10 +1048,11 @@
         track.addEventListener('scroll', () => {
           if (pending) return;
           pending = true;
-          requestAnimationFrame(() => { pending = false; updateChrome(); });
+          requestAnimationFrame(() => { pending = false; updateCounter(); });
         });
 
-        updateChrome();
+        updateCounter();
+        start();
       })
       .catch(() => { /* no manifest → carousel stays hidden */ });
   })();
